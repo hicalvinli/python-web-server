@@ -5,7 +5,7 @@ import psycopg2
 app = Flask(__name__)
 api = Api(app)
 
-conn = psycopg2.connect(host="localhost", port=5432, database="projdb", user="calv", password="postgrescalv622")
+conn = psycopg2.connect(host="localhost", port=5432, database=db, user=username, password=secret)
 curs = conn.cursor()
 
 post_parser = reqparse.RequestParser()
