@@ -5,7 +5,7 @@ import psycopg2
 app = Flask(__name__)
 api = Api(app)
 
-conn = psycopg2.connect(host="localhost", port=5432, database=db, user=username, password=secret)
+conn = psycopg2.connect(host=host, database=database, user=user, password=password)
 curs = conn.cursor()
 
 post_parser = reqparse.RequestParser()
@@ -41,14 +41,10 @@ class Persons(Resource):
 
     def post(self):
         args = post_parser.parse_args()
-        curs.execute("SELECT id FROM people ORDER BY id DESC")
-        person_id = curs.fetchone()
-        if not person_id:
-            person_id = 1
-        else:
-            person_id = person_id[0] + 1
-        curs.execute("INSERT INTO people (id, name, address, ssn, college) VALUES (%s, %s, %s, %s, %s)", (person_id, args["name"], args["address"], args["ssn"], args["college"]))
+        curs.execute("INSERT INTO people (name, address, ssn, college) VALUES (%s, %s, %s, %s)", (args["name"], args["address"], args["ssn"], args["college"]))
         conn.commit()
+        curs.execute("SELECT max(id) FROM people;")
+        person_id = curs.fetchone()[0];
         return Person.get(self, person_id), 201
 
 
